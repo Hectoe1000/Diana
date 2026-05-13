@@ -87,137 +87,66 @@ function onWindowResize() {
 }
 
 // ==========================================
-// NARRATIVA DE SCROLL - FUNDIDO SECUENCIAL
+// NARRATIVA POR BOTONES
 // ==========================================
 function initNarrativeScroll() {
-    const container = document.querySelector('.narrative-container');
-    if (!container) return;
+    const slides = [
+        document.getElementById('slide-1'),
+        document.getElementById('slide-2'),
+        document.getElementById('slide-3'),
+    ];
+    const btnNext = document.getElementById('btn-next');
+    const btnPrev = document.getElementById('btn-prev');
 
-    const slide1 = document.querySelector('.narrative-slide-1');
-    const slide2 = document.querySelector('.narrative-slide-2');
-    const slide3 = document.querySelector('.narrative-slide-3');
-    const scrollIndicator = document.querySelector('.scroll-indicator');
+    if (!slides[0] || !btnNext || !btnPrev) return;
 
-    // Elementos hijos para animar
-    const slide1Text = slide1 ? slide1.querySelector('h2') : null;
-    const slide2Text = slide2 ? slide2.querySelector('h1') : null;
-    const slide3Content = slide3 ? slide3.querySelector('div') : null;
+    let current = 0;
+    const total = slides.length;
 
-    function handleScroll() {
-        const containerRect = container.getBoundingClientRect();
-        const containerHeight = container.offsetHeight;
-        const viewportHeight = window.innerHeight;
+    function showSlide(index, direction) {
+        const prevSlide = slides[current];
+        const nextSlide = slides[index];
 
-        // Cuánto hemos scrolleado dentro del contenedor
-        const scrolled = -containerRect.top;
-        const maxScroll = containerHeight - viewportHeight;
-        const progress = Math.max(0, Math.min(1, scrolled / maxScroll));
+        // Salida del actual
+        prevSlide.classList.remove('active');
+        prevSlide.classList.add(direction === 'forward' ? 'exit-up' : 'exit-down');
 
-        // ==========================================
-        // FASE 1: Fiesta de Graduación (0% - 30%)
-        // Se desvanece al bajar
-        // ==========================================
-        if (slide1Text) {
-            if (progress < 0.30) {
-                const fadeOut = progress / 0.30;
-                slide1Text.style.opacity = 1 - fadeOut;
-                slide1Text.style.transform = `translateY(${-50 * fadeOut}px)`;
-                slide1Text.style.filter = `blur(${fadeOut * 6}px)`;
-            } else {
-                slide1Text.style.opacity = '0';
-                slide1Text.style.transform = 'translateY(-50px)';
-                slide1Text.style.filter = 'blur(6px)';
-            }
-        }
+        // Preparar entrada: clase que define posición inicial
+        nextSlide.classList.remove('exit-up', 'exit-down', 'active', 'enter-from-bottom', 'enter-from-top');
+        nextSlide.classList.add(direction === 'forward' ? 'enter-from-bottom' : 'enter-from-top');
 
-        // ==========================================
-        // FASE 2: LUMINA MATRIS (15% - 50%)
-        // Aparece y luego se desvanece
-        // ==========================================
-        if (slide2Text) {
-            if (progress > 0.15 && progress < 0.35) {
-                // Aparece
-                const fadeIn = (progress - 0.15) / 0.20;
-                slide2Text.style.opacity = Math.min(1, fadeIn);
-                slide2Text.style.transform = `translateY(${30 * (1 - Math.min(1, fadeIn))}px)`;
-            } else if (progress >= 0.35 && progress < 0.50) {
-                // Permanece visible
-                slide2Text.style.opacity = '1';
-                slide2Text.style.transform = 'translateY(0)';
-            } else if (progress >= 0.50 && progress < 0.60) {
-                // Se desvanece
-                const fadeOut = (progress - 0.50) / 0.10;
-                slide2Text.style.opacity = 1 - fadeOut;
-                slide2Text.style.transform = `translateY(${-40 * fadeOut}px)`;
-                slide2Text.style.filter = `blur(${fadeOut * 4}px)`;
-            } else if (progress >= 0.60) {
-                slide2Text.style.opacity = '0';
-                slide2Text.style.transform = 'translateY(-40px)';
-                slide2Text.style.filter = 'blur(4px)';
-            } else {
-                slide2Text.style.opacity = '0';
-                slide2Text.style.transform = 'translateY(30px)';
-            }
-        }
+        // Forzar reflow para que el navegador registre la clase antes de activar
+        nextSlide.getBoundingClientRect();
 
-        // ==========================================
-        // FASE 3: Obstetricia + Diana Mery (55% - 100%)
-        // Aparece y se mantiene
-        // ==========================================
-        if (slide3Content) {
-            if (progress > 0.55 && progress < 0.80) {
-                const fadeIn = (progress - 0.55) / 0.25;
-                slide3Content.style.opacity = Math.min(1, fadeIn);
-                slide3Content.style.transform = `translateY(${40 * (1 - Math.min(1, fadeIn))}px)`;
-            } else if (progress >= 0.80) {
-                slide3Content.style.opacity = '1';
-                slide3Content.style.transform = 'translateY(0)';
-            } else {
-                slide3Content.style.opacity = '0';
-                slide3Content.style.transform = 'translateY(40px)';
-            }
-        }
+        // Activar — dispara la transición CSS
+        nextSlide.classList.remove('enter-from-bottom', 'enter-from-top');
+        nextSlide.classList.add('active');
 
-        // ==========================================
-        // INDICADOR DE SCROLL
-        // ==========================================
-        if (scrollIndicator) {
-            if (progress < 0.05) {
-                scrollIndicator.style.opacity = '1';
-            } else if (progress < 0.15) {
-                scrollIndicator.style.opacity = Math.max(0, 1 - (progress - 0.05) / 0.10);
-            } else {
-                scrollIndicator.style.opacity = '0';
-            }
-        }
+        // Limpiar clases de salida tras la transición
+        setTimeout(() => {
+            prevSlide.classList.remove('exit-up', 'exit-down');
+        }, 900);
+
+        current = index;
+        updateButtons();
     }
 
-    // Optimización con requestAnimationFrame
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            requestAnimationFrame(() => {
-                handleScroll();
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
+    function updateButtons() {
+        btnPrev.style.display = current === 0 ? 'none' : 'flex';
+        btnNext.style.display = current === total - 1 ? 'none' : 'flex';
+    }
 
-    // También para touchmove
-    window.addEventListener('touchmove', () => {
-        if (!ticking) {
-            requestAnimationFrame(() => {
-                handleScroll();
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
+    btnNext.addEventListener('click', () => {
+        if (current < total - 1) showSlide(current + 1, 'forward');
+    });
 
-    // Ejecutar al cargar
-    handleScroll();
-    window.addEventListener('resize', handleScroll);
+    btnPrev.addEventListener('click', () => {
+        if (current > 0) showSlide(current - 1, 'backward');
+    });
+
+    // Activar primer slide
+    slides[0].classList.add('active');
+    updateButtons();
 }
 
 // ==========================================

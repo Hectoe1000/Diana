@@ -226,7 +226,7 @@
         }
 
         /* ==========================================
-           NARRATIVA DE SCROLL
+           NARRATIVA DE BOTONES
            ========================================== */
         .narrative-container {
             position: relative;
@@ -234,64 +234,67 @@
         }
 
         .narrative-slide {
-            position: sticky;
+            position: absolute;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.8s ease-out, filter 0.8s ease-out, transform 0.8s ease-out;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(30px);
+            filter: blur(6px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out, filter 0.8s ease-out;
         }
 
-        /* Capas */
-        .narrative-slide-1 {
-            z-index: 40;
+        .narrative-slide.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+            filter: blur(0px);
         }
 
-        .narrative-slide-2 {
-            z-index: 30;
-            margin-top: -100vh;
+        .narrative-slide.exit-up {
+            opacity: 0;
+            transform: translateY(-40px);
+            filter: blur(6px);
         }
 
-        .narrative-slide-3 {
-            z-index: 20;
-            margin-top: -100vh;
+        .narrative-slide.exit-down {
+            opacity: 0;
+            transform: translateY(40px);
+            filter: blur(6px);
         }
 
-        .scroll-indicator {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            transition: opacity 0.5s ease-out;
+        /* Posición inicial antes de entrar — sin transición */
+        .narrative-slide.enter-from-bottom {
+            opacity: 0;
+            transform: translateY(40px);
+            filter: blur(6px);
+            transition: none;
+        }
+
+        .narrative-slide.enter-from-top {
+            opacity: 0;
+            transform: translateY(-40px);
+            filter: blur(6px);
+            transition: none;
+        }
+
+        .narrative-slide-1 { z-index: 40; }
+        .narrative-slide-2 { z-index: 30; }
+        .narrative-slide-3 { z-index: 20; }
+
+        #btn-prev:hover, #btn-next:hover {
+            background: rgba(255,255,255,0.15) !important;
         }
 
         @keyframes bounceDown {
-
-            0%,
-            100% {
-                transform: translateY(0);
-                opacity: 0.6;
-            }
-
-            50% {
-                transform: translateY(8px);
-                opacity: 1;
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .narrative-slide {
-                padding: 1rem;
-            }
+            0%, 100% { transform: translateY(0); opacity: 0.6; }
+            50%       { transform: translateY(6px); opacity: 1; }
         }
     </style>
 </head>
@@ -304,64 +307,95 @@
     <main class="content-wrapper relative min-h-screen flex flex-col items-center">
 
         <!-- ========================================== -->
-        <!-- NARRATIVA DE SCROLL                      -->
+        <!-- NARRATIVA POR BOTONES                    -->
         <!-- ========================================== -->
-        <div class="narrative-container" style="height: 300vh;">
+        <div class="narrative-container" style="height: 100vh;">
 
             <!-- FASE 1: Fiesta de Graduación -->
-            <div class="narrative-slide narrative-slide-1">
-                <h2 class="pinyon-script-regular text-center px-4" style="font-size: clamp(4rem, 8vw, 5.5rem); 
+            <div class="narrative-slide narrative-slide-1" id="slide-1">
+                <h2 class="pinyon-script-regular text-center px-4" style="font-size: clamp(3rem, 10vw, 5.5rem); 
                            text-shadow: 0 0 40px rgba(255,182,193,0.5), 0 0 80px rgba(255,182,193,0.3), 0 4px 8px rgba(0,0,0,0.5);
-                           line-height: 1.1;
-                           opacity: 1;
-                           transition: opacity 0.8s ease-out, transform 0.8s ease-out, filter 0.8s ease-out;">
+                           line-height: 1.1;">
                     Fiesta de<br>Graduación
                 </h2>
             </div>
 
             <!-- FASE 2: LUMINA MATRIS -->
-            <div class="narrative-slide narrative-slide-2 lumina-section">
-                <h1 class="text-center font-bold gold-text px-4 lumina-title" style="font-size: clamp(3.5rem, 7vw, 5rem); 
+            <div class="narrative-slide narrative-slide-2 lumina-section" id="slide-2">
+                <h1 class="text-center font-bold gold-text px-4 lumina-title" style="font-size: clamp(2.8rem, 9vw, 5rem); 
                            line-height: 1.1;
                            letter-spacing: 0.05em;
-                           position: relative;
-                           opacity: 0;
-                           transform: translateY(30px);
-                           transition: opacity 1s ease-out, transform 1s ease-out;">
+                           position: relative;">
                     LUMINA<br>MATRIS
                 </h1>
             </div>
 
             <!-- FASE 3: Obstetricia + Diana Mery -->
-            <div class="narrative-slide narrative-slide-3">
-                <div
-                    style="text-align: center; opacity: 0; transform: translateY(30px); transition: opacity 1s ease-out, transform 1s ease-out;">
-                    <p class="font-cinzel italic tracking-widest px-4" style="font-size: clamp(1.2rem, 4vw, 2rem);
+            <div class="narrative-slide narrative-slide-3" id="slide-3">
+                <div style="text-align: center;">
+                    <p class="font-cinzel italic tracking-widest px-4" style="font-size: clamp(1rem, 4.5vw, 2rem);
                                color: rgba(255, 200, 210, 0.9);
                                text-shadow: 0 0 20px rgba(255,182,193,0.4);
                                letter-spacing: 0.2em;
                                margin-bottom: 1rem;">
                         Obstetricia - UPLA 2026-I
                     </p>
-                    <div
-                        style="width: 60px; height: 2px; background: linear-gradient(90deg, transparent, #bf953f, #fcf6ba, #bf953f, transparent); margin: 0 auto 2rem;">
-                    </div>
-                    <p class="montecarlo-regular gold-text px-4" style="font-size: clamp(3.5rem, 11vw, 7.5rem);
+                    <div style="width: 60px; height: 2px; background: linear-gradient(90deg, transparent, #bf953f, #fcf6ba, #bf953f, transparent); margin: 0 auto 2rem;"></div>
+                    <p class="montecarlo-regular gold-text px-4" style="font-size: clamp(3rem, 13vw, 7.5rem);
                                line-height: 1.2;">
                         Diana Mery
                     </p>
                 </div>
             </div>
 
-            <!-- Indicador de scroll -->
-            <div class="scroll-indicator">
-                <span
-                    style="font-size: 0.75rem; letter-spacing: 0.3em; color: rgba(255,200,210,0.7); text-transform: uppercase;">Desliza</span>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="animation: bounceDown 2s infinite;">
-                    <path d="M12 5v14M5 12l7 7 7-7" stroke="rgba(255,200,210,0.6)" stroke-width="1.5"
-                        stroke-linecap="round" stroke-linejoin="round" />
+            <!-- Botón anterior (arriba) -->
+            <button id="btn-prev" aria-label="Anterior" style="
+                position: fixed;
+                top: 24px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 100;
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                gap: 6px;
+                background: rgba(255,255,255,0.08);
+                border: 1px solid rgba(255,200,210,0.3);
+                backdrop-filter: blur(8px);
+                border-radius: 50px;
+                padding: 10px 22px;
+                cursor: pointer;
+                transition: opacity 0.4s, background 0.3s;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 19V5M5 12l7-7 7 7" stroke="rgba(255,200,210,0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-            </div>
+                <span style="font-size: 0.6rem; letter-spacing: 0.25em; color: rgba(255,200,210,0.7); text-transform: uppercase; font-family: 'Cinzel', serif;">Anterior</span>
+            </button>
+
+            <!-- Botón siguiente (abajo) -->
+            <button id="btn-next" aria-label="Siguiente" style="
+                position: fixed;
+                bottom: 28px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 100;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 6px;
+                background: rgba(255,255,255,0.08);
+                border: 1px solid rgba(255,200,210,0.3);
+                backdrop-filter: blur(8px);
+                border-radius: 50px;
+                padding: 10px 22px;
+                cursor: pointer;
+                transition: opacity 0.4s, background 0.3s;">
+                <span style="font-size: 0.6rem; letter-spacing: 0.25em; color: rgba(255,200,210,0.7); text-transform: uppercase; font-family: 'Cinzel', serif;">Siguiente</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="animation: bounceDown 2s infinite;">
+                    <path d="M12 5v14M5 12l7 7 7-7" stroke="rgba(255,200,210,0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+
         </div>
 
         <!-- ========================================== -->
