@@ -35,10 +35,19 @@
             overflow-x: hidden;
             background-color: var(--bg-deep);
             color: white;
+        }
+
+        /* Fondo fijo real — funciona en iOS y Android */
+        #bg-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
             background-image: url('./src/fondo3.png');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
         }
 
         #petal-container {
@@ -289,6 +298,7 @@
 
 <body>
 
+    <div id="bg-fixed"></div>
     <div id="petal-container"></div>
 
     <main class="content-wrapper relative min-h-screen flex flex-col items-center">
