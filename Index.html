@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Matris - Invitación Graduación</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&family=Pinyon+Script&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #1a0a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background-color: var(--bg-deep);
+            color: white;
+            background-image: url('./src/fondo3.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #petal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .montecarlo-regular {
+            font-family: "MonteCarlo", cursive;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .pinyon-script-regular {
+            font-family: "Pinyon Script", cursive;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .glass {
+            background: rgba(20, 0, 10, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 182, 193, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        .gold-text {
+            background: linear-gradient(to right,
+                    #bf953f,
+                    #fcf6ba 25%,
+                    #b38728 50%,
+                    #fcf6ba 75%,
+                    #bf953f);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        h1,
+        h2,
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ==========================================
+           SISTEMA DE ESTRELLAS
+           ========================================== */
+        .star-particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 25;
+            animation: starFloat 3s ease-in-out infinite;
+        }
+
+        .star-particle::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle,
+                    rgba(255, 255, 255, 1) 0%,
+                    rgba(255, 215, 0, 0.8) 20%,
+                    rgba(255, 182, 193, 0.3) 50%,
+                    transparent 70%);
+            border-radius: 50%;
+            animation: starPulse 2s ease-in-out infinite;
+        }
+
+        .star-particle.spark {
+            animation: starSpark 1.5s ease-in-out infinite;
+        }
+
+        @keyframes starFloat {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(0.8);
+            }
+
+            25% {
+                transform: translate(5px, -8px) scale(1.2);
+            }
+
+            50% {
+                transform: translate(-3px, -15px) scale(0.6);
+            }
+
+            75% {
+                transform: translate(-8px, -5px) scale(1.1);
+            }
+        }
+
+        @keyframes starPulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                box-shadow: 0 0 3px rgba(255, 215, 0, 0.3);
+            }
+
+            50% {
+                opacity: 1;
+                box-shadow: 0 0 8px rgba(255, 215, 0, 0.8), 0 0 15px rgba(255, 215, 0, 0.4);
+            }
+        }
+
+        @keyframes starSpark {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(0.2);
+            }
+
+            30% {
+                opacity: 1;
+                transform: scale(1.4);
+            }
+
+            60% {
+                opacity: 0.8;
+                transform: scale(0.8);
+            }
+        }
+
+        .glow-trail {
+            position: absolute;
+            pointer-events: none;
+            z-index: 24;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 6px 2px rgba(255, 215, 0, 0.8), 0 0 12px 4px rgba(255, 182, 193, 0.4);
+            animation: trailFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes trailFloat {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: translate(15px, -30px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* ==========================================
+           NARRATIVA DE SCROLL
+           ========================================== */
+        .narrative-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .narrative-slide {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease-out, filter 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        /* Capas */
+        .narrative-slide-1 {
+            z-index: 40;
+        }
+
+        .narrative-slide-2 {
+            z-index: 30;
+            margin-top: -100vh;
+        }
+
+        .narrative-slide-3 {
+            z-index: 20;
+            margin-top: -100vh;
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.5s ease-out;
+        }
+
+        @keyframes bounceDown {
+
+            0%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: translateY(8px);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .narrative-slide {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="petal-container"></div>
+
+    <main class="content-wrapper relative min-h-screen flex flex-col items-center">
+
+        <!-- ========================================== -->
+        <!-- NARRATIVA DE SCROLL                      -->
+        <!-- ========================================== -->
+        <div class="narrative-container" style="height: 300vh;">
+
+            <!-- FASE 1: Fiesta de Graduación -->
+            <div class="narrative-slide narrative-slide-1">
+                <h2 class="pinyon-script-regular text-center px-4" style="font-size: clamp(7rem, 12vw, 8rem); 
+                           text-shadow: 0 0 40px rgba(255,182,193,0.5), 0 0 80px rgba(255,182,193,0.3), 0 4px 8px rgba(0,0,0,0.5);
+                           line-height: 1.1;
+                           opacity: 1;
+                           transition: opacity 0.8s ease-out, transform 0.8s ease-out, filter 0.8s ease-out;">
+                    Fiesta de<br>Graduación
+                </h2>
+            </div>
+
+            <!-- FASE 2: LUMINA MATRIS -->
+            <div class="narrative-slide narrative-slide-2 lumina-section">
+                <h1 class="text-center font-bold gold-text px-4 lumina-title" style="font-size: clamp(5.5rem, 10vw, 7rem); 
+                           line-height: 1.1;
+                           letter-spacing: 0.05em;
+                           position: relative;
+                           opacity: 0;
+                           transform: translateY(30px);
+                           transition: opacity 1s ease-out, transform 1s ease-out;">
+                    LUMINA<br>MATRIS
+                </h1>
+            </div>
+
+            <!-- FASE 3: Obstetricia + Diana Mery -->
+            <div class="narrative-slide narrative-slide-3">
+                <div
+                    style="text-align: center; opacity: 0; transform: translateY(30px); transition: opacity 1s ease-out, transform 1s ease-out;">
+                    <p class="font-cinzel italic tracking-widest px-4" style="font-size: clamp(1rem, 3vw, 1.5rem);
+                               color: rgba(255, 200, 210, 0.9);
+                               text-shadow: 0 0 20px rgba(255,182,193,0.4);
+                               letter-spacing: 0.2em;
+                               margin-bottom: 1rem;">
+                        Obstetricia - UPLA 2026-I
+                    </p>
+                    <div
+                        style="width: 60px; height: 2px; background: linear-gradient(90deg, transparent, #bf953f, #fcf6ba, #bf953f, transparent); margin: 0 auto 2rem;">
+                    </div>
+                    <p class="montecarlo-regular gold-text px-4" style="font-size: clamp(2.5rem, 8vw, 6rem);
+                               line-height: 1.2;">
+                        Diana Mery
+                    </p>
+                </div>
+            </div>
+
+            <!-- Indicador de scroll -->
+            <div class="scroll-indicator">
+                <span
+                    style="font-size: 0.75rem; letter-spacing: 0.3em; color: rgba(255,200,210,0.7); text-transform: uppercase;">Desliza</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="animation: bounceDown 2s infinite;">
+                    <path d="M12 5v14M5 12l7 7 7-7" stroke="rgba(255,200,210,0.6)" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- FOTO + TEXTO DE INVITACIÓN               -->
+        <!-- ========================================== -->
+        <div class="flex justify-center px-4 pt-6 pb-16 md:pt-8 md:pb-20 w-full">
+            <div class="max-w-2xl w-full glass rounded-3xl p-6 md:p-10 text-center"
+                style="border: 1px solid rgba(191,149,63,0.25); box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(191,149,63,0.08);">
+
+                <!-- Foto de Diana -->
+                <div class="relative mx-auto mb-6 md:mb-8"
+                    style="width: clamp(140px, 40vw, 220px); height: clamp(140px, 40vw, 220px);">
+                    <!-- Marco dorado exterior -->
+                    <div class="absolute inset-0 rounded-full"
+                        style="background: conic-gradient(from 0deg, #bf953f, #fcf6ba, #b38728, #fcf6ba, #bf953f); padding: 3px; border-radius: 9999px;">
+                        <div class="w-full h-full rounded-full" style="background: #1a0a1a;"></div>
+                    </div>
+                    <!-- Foto -->
+                    <img src="./src/doto.JPG" alt="Diana Mery"
+                        class="absolute inset-0 w-full h-full rounded-full object-cover object-top"
+                        style="padding: 4px; filter: sepia(15%) contrast(1.05) brightness(1.02);" />
+                    <!-- Brillo sutil encima -->
+                    <div class="absolute inset-0 rounded-full pointer-events-none"
+                        style="background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.08) 0%, transparent 60%);">
+                    </div>
+                </div>
+
+                <!-- Línea decorativa -->
+                <div class="flex items-center justify-center gap-3 mb-6">
+                    <div class="h-px w-12 md:w-16"
+                        style="background: linear-gradient(to right, transparent, rgba(191,149,63,0.5));"></div>
+                    <svg class="w-2.5 h-2.5" style="color: rgba(191,149,63,0.5);" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" />
+                    </svg>
+                    <div class="h-px w-12 md:w-16"
+                        style="background: linear-gradient(to left, transparent, rgba(191,149,63,0.5));"></div>
+                </div>
+
+                <!-- Monograma decorativo -->
+                <div class="w-9 h-9 md:w-10 md:h-10 mx-auto mb-4 rounded-full border border-amber-400/30 flex items-center justify-center"
+                    style="background: rgba(255,248,220,0.06);">
+                    <svg class="w-4 h-4 md:w-5 md:h-5 text-amber-400/50" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                </div>
+
+                <p class="font-cinzel text-[10px] md:text-xs tracking-[0.3em] text-amber-200/60 uppercase mb-2">
+                    Con gran orgullo y alegría
+                </p>
+                <p class="font-cinzel text-xs md:text-sm text-white/50 tracking-wide mb-5">
+                    tengo el honor de invitarle a mi
+                </p>
+                <p class="pinyon-script-regular text-5xl md:text-6xl gold-text" style="line-height: 1.2;">
+                    Fiesta de Graduación
+                </p>
+
+                <div class="flex items-center justify-center gap-3 my-5">
+                    <div class="w-10 md:w-14 h-px" style="background: rgba(191,149,63,0.3);"></div>
+                    <svg class="w-2.5 h-2.5" style="color: rgba(191,149,63,0.4);" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+                    <div class="w-10 md:w-14 h-px" style="background: rgba(191,149,63,0.3);"></div>
+                </div>
+
+                <p class="font-cinzel text-[10px] md:text-xs text-white/40 italic leading-relaxed tracking-wide px-4">
+                    Una celebración que marca el cierre de una etapa<br class="hidden md:block"> y el inicio de nuevos
+                    sueños
+                </p>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- CONTENIDO PRINCIPAL - PERGAMINO DE LUJO    -->
+        <!-- ========================================== -->
+        <div class="flex justify-center px-4 pb-12 md:pb-16">
+            <div class="max-w-3xl w-full relative" style="background: #fdf8ed; 
+               background-image: 
+                   repeating-linear-gradient(45deg, rgba(200,175,120,0.08) 0px, rgba(200,175,120,0.08) 1px, transparent 1px, transparent 8px),
+                   repeating-linear-gradient(0deg, rgba(160,130,80,0.05) 0px, rgba(160,130,80,0.05) 2px, transparent 2px, transparent 12px),
+                   radial-gradient(circle at 30% 40%, rgba(220,190,130,0.08) 0%, transparent 50%),
+                   radial-gradient(circle at 70% 80%, rgba(200,170,100,0.06) 0%, transparent 60%);
+               border-radius: 8px 28px 28px 28px; 
+               box-shadow: 0 30px 45px -18px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,240,0.8), inset 0 0 0 1px rgba(230,210,160,0.6); 
+               border: 1px solid #d6c49b;">
+
+                <!-- Esquinas decorativas -->
+                <div class="absolute top-0 left-0 w-12 h-12 md:w-16 md:h-16 pointer-events-none"
+                    style="background: radial-gradient(circle at 0% 0%, rgba(180,150,90,0.2) 0%, transparent 70%); border-top-left-radius: 8px;">
+                </div>
+                <div class="absolute top-0 right-0 w-12 h-12 md:w-16 md:h-16 pointer-events-none"
+                    style="background: radial-gradient(circle at 100% 0%, rgba(180,150,90,0.2) 0%, transparent 70%); border-top-right-radius: 28px;">
+                </div>
+                <div class="absolute bottom-0 left-0 w-12 h-12 md:w-16 md:h-16 pointer-events-none"
+                    style="background: radial-gradient(circle at 0% 100%, rgba(180,150,90,0.2) 0%, transparent 70%); border-bottom-left-radius: 28px;">
+                </div>
+
+                <!-- Borde interno -->
+                <div class="absolute inset-3 md:inset-4 pointer-events-none opacity-40"
+                    style="border: 0.5px solid #c9b684; border-radius: 4px 22px 22px 22px; box-shadow: inset 0 0 8px rgba(160,130,60,0.1);">
+                </div>
+
+                <!-- Contenido interior -->
+                <div class="p-6 md:p-10 lg:p-12 relative z-10">
+
+                    <!-- ===== SEPARADOR ===== -->
+                    <div class="mb-8 md:mb-10 flex items-center justify-center gap-2">
+                        <div
+                            class="h-px w-10 md:w-12 bg-gradient-to-r from-transparent via-amber-400/50 to-amber-400/50">
+                        </div>
+                        <svg class="w-3 h-3 text-amber-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                        <div
+                            class="h-px w-10 md:w-12 bg-gradient-to-r from-amber-400/50 via-amber-400/50 to-transparent">
+                        </div>
+                    </div>
+
+                    <!-- ===== SECCIÓN EVENTO ===== -->
+                    <div class="text-center mb-8 md:mb-10">
+                        <p class="font-cinzel text-[10px] md:text-xs tracking-[0.3em] text-amber-600/80 uppercase mb-3">
+                            Detalles del Evento</p>
+                        <div class="w-8 h-px bg-amber-400/40 mx-auto mb-6"></div>
+
+                        <div class="space-y-4 text-stone-600">
+                            <div>
+                                <p class="font-cinzel text-[10px] tracking-[0.2em] text-stone-400 uppercase mb-1">Fecha
+                                </p>
+                                <p class="font-cinzel text-sm md:text-base text-amber-700 tracking-wide">Sábado, 30 de
+                                    Mayo de 2026</p>
+                            </div>
+                            <div>
+                                <p class="font-cinzel text-[10px] tracking-[0.2em] text-stone-400 uppercase mb-1">Hora
+                                </p>
+                                <p class="font-cinzel text-sm md:text-base text-amber-700 tracking-wide">10:00 a.m.</p>
+                            </div>
+                            <div>
+                                <p class="font-cinzel text-[10px] tracking-[0.2em] text-stone-400 uppercase mb-1">Lugar
+                                </p>
+                                <p class="font-cinzel text-sm md:text-base text-amber-700 tracking-wide">Paraíso
+                                    Convenciones</p>
+                                <p class="font-cinzel text-[10px] md:text-xs text-stone-400 tracking-wide mt-0.5">Av.
+                                    Yanama 1602, Huancayo</p>
+                            </div>
+                        </div>
+
+                        <p
+                            class="font-cinzel text-[9px] md:text-[10px] italic text-stone-400 leading-relaxed pt-5 tracking-wide px-4">
+                            La Promoción agradece por anticipado su gentil asistencia
+                        </p>
+                    </div>
+
+                    <!-- ===== SEPARADOR ===== -->
+                    <div class="my-8 md:my-10 flex items-center justify-center gap-2">
+                        <div
+                            class="h-px w-8 md:w-10 bg-gradient-to-r from-transparent via-amber-400/40 to-amber-400/40">
+                        </div>
+                        <svg class="w-3 h-3 text-amber-400/40" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" />
+                        </svg>
+                        <div
+                            class="h-px w-8 md:w-10 bg-gradient-to-r from-amber-400/40 via-amber-400/40 to-transparent">
+                        </div>
+                    </div>
+
+                    <!-- ===== CÓDIGO DE VESTIMENTA ===== -->
+                    <div class="text-center mb-8 md:mb-10">
+                        <p class="font-cinzel text-[10px] md:text-xs tracking-[0.3em] text-amber-600/80 uppercase mb-3">
+                            Código de Vestimenta</p>
+                        <div class="w-8 h-px bg-amber-400/40 mx-auto mb-6"></div>
+
+                        <div class="flex justify-center gap-10 md:gap-16 mt-5">
+                            <div class="text-center">
+
+                                <div class="flex flex-col items-center">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="mb-2">
+                                        <path d="M12 2L9 7L10 11L7 22H17L14 11L15 7L12 2Z" fill="#E11D48"
+                                            fill-opacity="0.8" />
+                                        <path d="M12 2L10 6L11 10L8 18L12 22L16 18L13 10L14 6L12 2Z" fill="#FB7185" />
+                                    </svg>
+                                    <p class="font-cinzel text-[10px] md:text-xs text-stone-500 tracking-wide mt-2">
+                                        Damas</p>
+                                    <p class="font-cinzel text-[9px] text-rose-400/60 tracking-wide mt-0.5">Vestido
+                                        elegante</p>
+                                </div>
+                            </div>
+                            <div class="text-center">
+
+                                <svg width="45" height="45" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="mb-2">
+                                    <path d="M4 4L12 7L20 4V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V4Z"
+                                        fill="#332F2E" />
+
+                                    <path d="M12 7L16 4H8L12 7Z" fill="#FFFFFF" />
+
+                                    <path d="M4 4L12 7L8 4H4V7L4 4Z" fill="#1C1917" />
+                                    <path d="M20 4L12 7L16 4H20V7L20 4Z" fill="#1C1917" />
+
+                                    <path d="M12 7L10.5 9L12 13L13.5 9L12 7Z" fill="#B59A5D" />
+                                    <path d="M12 13L10 17L12 21L14 17L12 13Z" fill="#B59A5D" />
+                                </svg>
+
+                                <p class="font-cinzel text-[10px] md:text-xs text-stone-500 tracking-wide mt-2">Varones
+                                </p>
+                                <p class="font-cinzel text-[9px] text-stone-400/60 tracking-wide mt-0.5">Terno de Gala
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== SEPARADOR ===== -->
+                    <div class="my-8 md:my-10 flex items-center justify-center gap-2">
+                        <div
+                            class="h-px w-8 md:w-10 bg-gradient-to-r from-transparent via-amber-400/40 to-amber-400/40">
+                        </div>
+                        <svg class="w-3 h-3 text-amber-400/40" fill="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <div
+                            class="h-px w-8 md:w-10 bg-gradient-to-r from-amber-400/40 via-amber-400/40 to-transparent">
+                        </div>
+                    </div>
+
+                    <!-- ===== SECCIÓN ENTRETENIMIENTO ===== -->
+
+
+                    <!-- Sello decorativo final -->
+                    <div class="mt-10 md:mt-12 text-center">
+                        <div
+                            class="inline-flex w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-amber-300/20 to-amber-600/10 border border-amber-400/30 items-center justify-center">
+                            <div class="w-5 h-5 md:w-6 md:h-6 rounded-full border border-amber-400/40"></div>
+                        </div>
+                        <p class="font-cinzel text-[9px] md:text-[10px] text-stone-400 mt-2 tracking-[0.3em]">— 2026 —
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <img src="./src/iamgen original.JPG" alt="" srcset="">
+        </div>
+        <!-- ========================================== -->
+        <!-- RUTA DEL ENTRETENIMIENTO                 -->
+        <!-- ========================================== -->
+        <div class="flex justify-center px-4 py-12 md:py-16">
+            <div class="max-w-4xl w-full glass rounded-3xl p-6 md:p-10 lg:p-12">
+                <div class="text-center mb-10 md:mb-14">
+                    <h2 class="pinyon-script-regular text-4xl md:text-5xl lg:text-6xl gold-text mb-3">
+                        Ruta del Entretenimiento
+                    </h2>
+                    <p class="font-cinzel text-xs md:text-sm tracking-[0.3em] text-amber-200/70 uppercase">
+                        Fiesta de Gala
+                    </p>
+                </div>
+
+                <!-- Timeline Responsivo -->
+                <div class="relative">
+                    <!-- Línea vertical en móvil, horizontal en desktop -->
+                    <div
+                        class="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-400/20 via-amber-400/60 to-amber-400/20">
+                    </div>
+                    <div
+                        class="md:hidden absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-amber-400/20 via-amber-400/60 to-amber-400/20">
+                    </div>
+
+                    <!-- Grid de eventos -->
+                    <div class="md:grid md:grid-cols-4 md:gap-4 space-y-8 md:space-y-0">
+
+                        <!-- Evento 1 -->
+                        <div
+                            class="relative flex md:flex-col items-start md:items-center md:text-center gap-4 md:gap-0">
+                            <div
+                                class="flex-shrink-0 w-16 h-16 md:w-12 md:h-12 rounded-full glass border-2 border-amber-400/40 flex items-center justify-center text-2xl md:text-3xl z-10 md:order-2">
+                                🎓
+                            </div>
+                            <div class="flex-1 md:order-1 md:mb-6">
+                                <p class="text-amber-300 font-semibold text-base md:text-lg mb-1">12:00h</p>
+                                <p class="text-white/90 text-sm md:text-base font-light">Presentación de la Promoción
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Evento 2 -->
+                        <div
+                            class="relative flex md:flex-col items-start md:items-center md:text-center gap-4 md:gap-0">
+                            <div
+                                class="flex-shrink-0 w-16 h-16 md:w-12 md:h-12 rounded-full glass border-2 border-amber-400/40 flex items-center justify-center text-2xl md:text-3xl z-10 md:order-1">
+                                🥂
+                            </div>
+                            <div class="flex-1 md:order-2 md:mt-6">
+                                <p class="text-amber-300 font-semibold text-base md:text-lg mb-1">01:00 PM</p>
+                                <p class="text-white/90 text-sm md:text-base font-light">Brindis de Honor</p>
+                            </div>
+                        </div>
+
+                        <!-- Evento 3 -->
+                        <div
+                            class="relative flex md:flex-col items-start md:items-center md:text-center gap-4 md:gap-0">
+                            <div
+                                class="flex-shrink-0 w-16 h-16 md:w-12 md:h-12 rounded-full glass border-2 border-amber-400/40 flex items-center justify-center text-2xl md:text-3xl z-10 md:order-2">
+                                🍽️
+                            </div>
+                            <div class="flex-1 md:order-1 md:mb-6">
+                                <p class="text-amber-300 font-semibold text-base md:text-lg mb-1">01:30 PM</p>
+                                <p class="text-white/90 text-sm md:text-base font-light">Almuerzo de Gala</p>
+                            </div>
+                        </div>
+
+                        <!-- Evento 4 -->
+                        <div
+                            class="relative flex md:flex-col items-start md:items-center md:text-center gap-4 md:gap-0">
+                            <div
+                                class="flex-shrink-0 w-16 h-16 md:w-12 md:h-12 rounded-full glass border-2 border-amber-400/40 flex items-center justify-center text-2xl md:text-3xl z-10 md:order-1">
+                                💃
+                            </div>
+                            <div class="flex-1 md:order-2 md:mt-6">
+                                <p class="text-amber-300 font-semibold text-base md:text-lg mb-1">04:00 PM</p>
+                                <p class="text-white/90 text-sm md:text-base font-light">Baile General</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- SHOW ESTELAR                             -->
+        <!-- ========================================== -->
+        <div class="flex justify-center px-4 py-12 md:py-16">
+            <div class="max-w-4xl w-full glass rounded-3xl p-6 md:p-10 lg:p-12">
+                <div class="text-center mb-10 md:mb-14">
+                    <h2 class="pinyon-script-regular text-4xl md:text-5xl lg:text-6xl gold-text mb-3">
+                        Show Estelar
+                    </h2>
+                    <p class="font-cinzel text-xs md:text-sm tracking-[0.3em] text-amber-200/70 uppercase">
+                        Gala Musical
+                    </p>
+                </div>
+
+                <!-- Grid de artistas -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+
+                    <!-- Artista 1 -->
+                    <div class="text-center space-y-4">
+                        <div
+                            class="w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full glass border-2 border-amber-400/30 flex items-center justify-center overflow-hidden">
+                            <div class="text-5xl md:text-6xl"><img src="./src/davila.png" alt="" srcset=""></div>
+                        </div>
+                        <p class="montecarlo-regular text-2xl md:text-3xl gold-text">
+                            Los Dávila K'jantu
+                        </p>
+                        <p class="text-white/70 text-sm md:text-base font-light">
+                            Música en vivo
+                        </p>
+                    </div>
+
+                    <!-- Artista 2 -->
+                    <div class="text-center space-y-4">
+                        <div
+                            class="w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full glass border-2 border-amber-400/30 flex items-center justify-center overflow-hidden">
+                            <div class="text-5xl md:text-6xl"><img src="./src/tormenta.png" alt="" srcset=""></div>
+                        </div>
+                        <p class="montecarlo-regular text-2xl md:text-3xl gold-text">
+                            Tormenta Show
+                        </p>
+                        <p class="text-white/70 text-sm md:text-base font-light">
+                            Espectáculo especial
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+ 
+
+    </main>
+
+    <audio id="musicaGala" autoplay loop>
+    <source src="./src/To the Clouds.m4a" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+</audio>
+    <script src="main.js"></script>
+</body>
+
+</html>
