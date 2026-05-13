@@ -2,7 +2,7 @@ let scene, camera, renderer, petals;
 const petalCount = 300;
 const velocities = [];
 const loader = new THREE.TextureLoader();
-const petalTexture = loader.load('https://png.pngtree.com/png-vector/20251006/ourmid/pngtree-a-single-delicate-pink-cherry-blossom-petal-with-visible-veins-isolated-png-image_17657028.webp');
+const petalTexture = loader.load('./src/petalo.webp');
 
 // ==========================================
 // THREE.JS - PÉTALOS
