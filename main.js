@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 let scene, camera, renderer, petals;
 const petalCount = 300;
 const velocities = [];
