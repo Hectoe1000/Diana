@@ -133,11 +133,46 @@ function initNarrativeScroll() {
 
     function updateButtons() {
         btnPrev.style.display = current === 0 ? 'none' : 'flex';
-        btnNext.style.display = current === total - 1 ? 'none' : 'flex';
+        
+        const spanText = btnNext.querySelector('span');
+        if (current === total - 1) {
+            btnNext.style.display = 'flex';
+            if (spanText) spanText.innerText = 'Ver Invitación';
+        } else {
+            btnNext.style.display = 'flex';
+            if (spanText) spanText.innerText = 'Siguiente';
+        }
     }
 
     btnNext.addEventListener('click', () => {
-        if (current < total - 1) showSlide(current + 1, 'forward');
+        if (current < total - 1) {
+            showSlide(current + 1, 'forward');
+        } else if (current === total - 1) {
+            // Ocultar narrativa y mostrar contenido restante
+            const narrativeContainer = document.querySelector('.narrative-container');
+            const contenidoRestante = document.getElementById('contenido-restante');
+            const audio = document.getElementById('musicaGala');
+            
+            if (audio && audio.paused) {
+                audio.play().catch(e => console.log('Audio autoplay prevented'));
+            }
+
+            if (contenidoRestante) {
+                contenidoRestante.style.display = 'block';
+                // Pequeño retardo para que la transición de opacidad funcione bien
+                setTimeout(() => {
+                    contenidoRestante.style.opacity = '1';
+                    // Hacer scroll suave hacia el contenido que acaba de aparecer (debajo del 100vh)
+                    window.scrollTo({
+                        top: window.innerHeight,
+                        behavior: 'smooth'
+                    });
+                }, 50);
+            }
+            
+            btnNext.style.display = 'none';
+            btnPrev.style.display = 'none';
+        }
     });
 
     btnPrev.addEventListener('click', () => {
