@@ -1,24 +1,18 @@
 let scene, camera, renderer, petals;
 const petalCount = 300;
 const velocities = [];
-const loader = new THREE.TextureLoader();
-const petalTexture = loader.load('./src/petalo.webp');
+let petalTexture;
 
 // ==========================================
 // THREE.JS - PÉTALOS
 // ==========================================
 
 
-    window.addEventListener('click', () => {
-        const audio = document.getElementById('musicaGala');
-        if (audio.paused) {
-            audio.play();
-        }
-    }, { once: true }); // El 'once: true' hace que esto solo pase la primera vez
-
-
 
 function initPetals() {
+    const loader = new THREE.TextureLoader();
+    petalTexture = loader.load('./src/petalo.webp');
+
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 5;
@@ -382,6 +376,14 @@ function initStars() {
 // INICIAR TODO
 // ==========================================
 function initAll() {
+    // Audio: se activa con el primer click del usuario
+    window.addEventListener('click', () => {
+        const audio = document.getElementById('musicaGala');
+        if (audio && audio.paused) {
+            audio.play();
+        }
+    }, { once: true });
+
     initPetals();
     initNarrativeScroll();
     initStars();
