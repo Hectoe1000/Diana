@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import petalImg from './src/petalo.webp';
 
 let scene, camera, renderer, petals;
 const petalCount = 300;
@@ -13,7 +14,7 @@ let petalTexture;
 
 function initPetals() {
     const loader = new THREE.TextureLoader();
-    petalTexture = loader.load('./src/petalo.webp');
+    petalTexture = loader.load(petalImg);
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
